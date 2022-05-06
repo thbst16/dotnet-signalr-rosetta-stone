@@ -5,6 +5,6 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - /workspaces/dotnet-kitchen-sink/dotnet-signalr-rosetta-stone/config/appsettings.json:/app/config/appsettings.json
+      - /workspaces/dotnet-signalr-rosetta-stone/config/appsettings.json:/app/config/appsettings.json
     extra_hosts:
     - "host.docker.internal:host-gateway"
