@@ -1,0 +1,92 @@
+@inherits LayoutComponentBase
+
+<PageTitle>Rosetta Stone Chat</PageTitle>
+
+<BSModal IsStaticBackdrop="true" DataId="loginModal" @ref="_modalRef">
+    <Header>Sign In</Header>
+    <Content>
+        <div class="@BS.Input_Group mb-3">
+            <span class="@BS.Input_Group_Text">@@</span>
+            <BSInput InputType="InputType.Text" placeholder="Username" @bind-Value="_name" />
+        </div>
+        <BSInput InputType="InputType.Select" @bind-Value="_language" >
+            <option value="null">Select your language...</option>
+            <option value="zh-Hant">Chinese</option>
+            <option value="en">English</option>
+            <option value="de">German</option>
+            <option value="ru">Russian</option>
+            <option value="es">Spanish</option>
+        </BSInput>
+    </Content>
+    <Footer Context="modal">
+        <BSButton MarginStart="Margins.Auto" Color="BSColor.Primary" @onclick="OnLoginClick">Sign In</BSButton>
+        <BSButton Color="BSColor.Danger" @onclick="modal.HideAsync">Close</BSButton>
+    </Footer>
+</BSModal>
+
+<BSNavbar Color="BSColor.Dark" IsDark="true" class="px-5">
+    <BSContainer Container="Container.Fluid">
+        <BSNavbarBrand Url="/">Rosetta Stone Chat</BSNavbarBrand>
+        <BSCollapse IsInNavbar="true">
+            <Toggler>
+                <BSNavbarToggle/>
+            </Toggler>
+            <Content>
+                <BSNav MarginEnd="Margins.Auto" MarginBottom="Margins.Small" Class="mb-lg-0">
+                </BSNav>
+                @if(_isLoggedIn == false)
+                {
+                    <BSNav MarginBottom="Margins.Small" Class="mb-lg-0">
+                        <BSNavItem Target="loginModal">Sign In</BSNavItem>
+                    </BSNav>
+                }
+                else
+                {
+                    <BSNav MarginBottom="Margins.Small" Class="mb-lg-0">
+                        <BSNavItem @onclick="OnLogoutClick">@ChatComponent.username | Sign Out</BSNavItem>
+                    </BSNav>
+                }
+            </Content>
+        </BSCollapse>
+    </BSContainer>
+</BSNavbar>
+
+<div class="app-container">
+    <div class="p-4">
+        <div class="container">
+            <ChatRoom @ref="ChatComponent"></ChatRoom>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container text-center">
+            <span class="text-muted">&copy; Beckshome.com 2022</span>
+        </div>
+    </footer>
+</div>
+
+@code
+{
+    private ChatRoom ChatComponent;
+    private BSModal? _modalRef;
+    private bool _isLoggedIn = false;
+    private string _signInText = "Sign In";
+    private string _signOutText = "";
+    private string _name;
+    private string? _language;
+
+    private void OnLoginClick()
+    {
+        _modalRef.HideAsync();
+        ChatComponent.username = _name + " (" + _language + ")";
+        _isLoggedIn = true;
+        ChatComponent.Chat(_name, _language);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnLogoutClick()
+    {
+        _isLoggedIn = false;
+        ChatComponent.DisconnectAsync();
+        InvokeAsync(StateHasChanged);
+    }
+}

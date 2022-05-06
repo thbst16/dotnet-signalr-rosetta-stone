@@ -1,0 +1,256 @@
+@page "/"
+@inject NavigationManager navigationManager
+@inject IJSRuntime _jsRuntime
+@using Microsoft.AspNetCore.SignalR.Client;
+
+<BSContainer>
+    <BSRow Justify="Justify.Start">
+        <BSCol Column="9">
+            <BSCard CardType="CardType.Card" class="card border-dark mb-3" style="width:100%">
+                <BSCard CardType="CardType.Header" class="card text-white bg-dark mb-3">
+                    <span class="oi oi-chat" aria-hidden="true">
+                        <span style="font-size:16px; line-height: 1.5; font-family: Helvetica, Arial, sans-serif"> Chat</span>
+                    </span>
+                </BSCard>
+                <BSCard CardType="CardType.Body">
+                    <div id="scrollarea" class="scrollable">
+                    <BSCard CardType="CardType.Text">
+                        @if (_isChatting){
+                            // display messages
+                            <div id="scrollbox">
+                                @foreach (var item in _messages)
+                                {
+                                    @if (item.IsNotice)
+                                    {
+                                        <div class="alert alert-info">
+                                            <span class="oi oi-warning"></span>
+                                            @item.Body
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="@item.CSS">
+                                            <div class="user">
+                                                <span class="oi oi-person"></span>
+                                                @item.Username
+                                            </div>
+                                            <div class="msg">
+                                                @item.Body
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        }
+                    </BSCard>
+                    </div>
+                </BSCard>
+            </BSCard>
+        </BSCol>
+        <BSCol Column="3">
+            <BSCard CardType="CardType.Card" class="card border-dark mb-3" style="width: 100%">
+                <BSCard CardType="CardType.Header" class="card text-white bg-dark mb-3">
+                    <span class="oi oi-people">
+                        <span style="font-size:16px; line-height: 1.5; font-family: Helvetica, Arial, sans-serif"> Users</span>
+                    </span>
+                </BSCard>
+                <BSCard CardType="CardType.Body">
+                    <div id="users" class="users">
+                    <BSCard CardType="CardType.Text">
+                        @if (_isChatting)
+                        {
+                            <div id="ulist">
+                                @foreach (var u in usersList)
+                                {
+                                    <div class="alert alert-secondary">
+                                        <span class="oi oi-person"></span>
+                                        @u.Name (@u.Language)
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </BSCard>
+                    </div>
+                </BSCard>
+            </BSCard>
+        </BSCol>
+    </BSRow>
+    <BSRow Justify="Justify.Start">
+        <BSCol Column="12">
+            @if (_isChatting)
+            {
+                <BSCard CardType="CardType.Card" class="card border-dark mb-3" style="width: 100%">
+                    <BSCard CardType="CardType.Body">
+                        <BSRow>
+                            <BSCol Column="11">
+                                <BSInput InputType="InputType.TextArea" placeholder="enter your chat text here" @bind-Value="@_newMessage"/>
+                            </BSCol>
+                            <BSCol Column="1">
+                                <BSButton class="btn btn-primary" @onclick="@(() => SendAsync(_newMessage))">Send</BSButton>
+                            </BSCol>
+                        </BSRow>
+                    </BSCard>
+                </BSCard>
+            }
+        </BSCol>
+    </BSRow>
+</BSContainer>
+
+@if (!_isChatting)
+{
+    // Error messages
+    @if (_message != null)
+    {
+        <div class="invalid-feedback">@_message</div>
+        <small id="emailHelp" class="form-text text-muted">@_message</small>
+    }
+}
+
+@code {
+    // flag to indicate chat status
+    private bool _isChatting = false;
+
+    // on-screen message
+    private string _message;
+
+    // new message input
+    private string _newMessage;
+
+    // list of messages in chat
+    private List<Message> _messages = new List<Message>();
+
+    private string _hubUrl;
+    private HubConnection _hubConnection;
+
+    // name of the user who will be chatting
+    public string username;
+
+    public List<BlazorChat.User> usersList = new List<BlazorChat.User>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    public async Task Chat(string name, string language)
+    {
+        // check username is valid
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            _message = "Please enter a name";
+            return;
+        };
+
+        // Create the chat client
+        string baseUrl = navigationManager.BaseUri;
+
+        // Use docker.internal when running with docker and with network specified in docker-compose
+        // _hubUrl = baseUrl.TrimEnd('/') + BlazorChatSampleHub.HubUrl;
+        _hubUrl = "http://host.docker.internal:8080/chat";
+
+        _hubConnection = new HubConnectionBuilder()
+        .WithUrl(_hubUrl, (opts) =>
+        {
+            opts.HttpMessageHandlerFactory = (message) =>
+            {
+                if (message is HttpClientHandler clientHandler)
+                    // bypass SSL certificate
+                    clientHandler.ServerCertificateCustomValidationCallback +=
+                        (sender, certificate, chain, sslPolicyErrors) => { return true; };
+                return message;
+            };
+        }).Build();
+
+        // Add handlers to refer to methods below when hub connects are called
+        _hubConnection.On<string, string>("Broadcast", BroadcastMessage);
+        _hubConnection.On<List<BlazorChat.User>>("UserConnected", MakeConnection);
+
+        await _hubConnection.StartAsync();
+
+        try
+        {
+            // Start chatting and force refresh UI.
+            _isChatting = true;
+            await Task.Delay(1);
+            // remove old messages and users
+            _messages.Clear();
+            usersList.Clear();
+
+            usersList.Add(new BlazorChat.User(){Name = name, Language = language, ConnectionId = ""});
+            await _hubConnection.SendAsync("UserConnected", usersList);
+            
+            await SendAsync($"[Notice] {username} joined chat room.");
+        }
+        catch (Exception e)
+        {
+            _message = $"ERROR: Failed to start chat client: {e.Message}";
+            _isChatting = false;
+        }
+    }
+
+    private async Task BroadcastMessage(string name, string message)
+    {
+        bool isMine = name.Equals(username, StringComparison.OrdinalIgnoreCase);
+        _messages.Add(new Message(name, message, isMine));
+        // Inform blazor the UI needs updating
+        StateHasChanged();
+        // Scroll to bottom using JS function
+        await _jsRuntime.InvokeVoidAsync("ScrollToBottom", "scrollarea");
+    }
+
+    private async Task MakeConnection(List<BlazorChat.User> ul)
+    {
+        usersList.Clear();
+        foreach (var u in ul)
+        {
+            usersList.Add(u);
+        }
+        StateHasChanged();
+    }
+
+    public async Task DisconnectAsync()
+    {
+        if (_isChatting)
+        {
+            await SendAsync($"[Notice] {username} left chat room.");
+
+            await _hubConnection.StopAsync();
+            await _hubConnection.DisposeAsync();
+
+            _hubConnection = null;
+            _isChatting = false;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task SendAsync(string message)
+    {
+        if (_isChatting && !string.IsNullOrWhiteSpace(message))
+        {
+            await _hubConnection.SendAsync("Broadcast", message);
+            _newMessage = string.Empty;
+        }
+    }
+
+    private class Message
+    {
+        public Message(string username, string body, bool mine)
+        {
+            Username = username;
+            Body = body;
+            Mine = mine;
+        }
+
+        public string Username { get; set; }
+        public string Body { get; set; }
+        public bool Mine { get; set; }
+
+        public bool IsNotice => (Body.StartsWith("[Notice]") | 
+                                Body.StartsWith("[Hinweis]") | 
+                                Body.StartsWith("[Примечание]") | 
+                                Body.StartsWith("[通知]") |
+                                Body.StartsWith("[Aviso]"));
+
+        public string CSS => Mine ? "sent" : "received";
+    }
+}
