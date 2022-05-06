@@ -10,7 +10,7 @@ project.lock.json
 .vscode
 
 # Configuration Values
-**/appsettings.json
+appsettings.json
 
 # User-specific files
 *.suo
