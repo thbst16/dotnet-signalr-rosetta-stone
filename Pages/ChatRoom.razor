@@ -146,7 +146,7 @@
 
         // Use docker.internal when running with docker and with network specified in docker-compose
         // _hubUrl = baseUrl.TrimEnd('/') + BlazorChatSampleHub.HubUrl;
-        _hubUrl = "http://host.docker.internal:8080/chat";
+        _hubUrl = "https://dotnet-signalr-rosetta-stone.azurewebsites.net/chat";
 
         _hubConnection = new HubConnectionBuilder()
         .WithUrl(_hubUrl, (opts) =>
