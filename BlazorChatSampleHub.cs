@@ -11,6 +11,7 @@ namespace BlazorChat
     {
         public const string HubUrl = "/chat";
         static List<User> ConnectedUsers = new List<User>();
+        static int TotalTranslations;
         Dictionary<string, string> Translations = new Dictionary<string, string>();
 
         public async Task Broadcast(string message)
@@ -69,6 +70,9 @@ namespace BlazorChat
 
         private async Task Translate(string sourceLanguage, string message)
         {
+            TotalTranslations += 1;
+            Console.WriteLine("Translation Counter: " + TotalTranslations);
+
             // Setup and retrieve basic job settings
             IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile("config/appsettings.json")
@@ -78,7 +82,10 @@ namespace BlazorChat
             
             List<string> languages = new List<string> {"zh-Hant", "en", "de", "ru", "es"};
             int i = languages.IndexOf(sourceLanguage);
-            languages.RemoveAt(i);
+            if (TotalTranslations < 2000)
+            {
+                languages.RemoveAt(i);
+            }
 
             StringBuilder route = new StringBuilder("/translate?api-version=3.0&from=" + sourceLanguage, 100);
             route.Append("&to=" + sourceLanguage);
@@ -88,32 +95,44 @@ namespace BlazorChat
             }
             Console.WriteLine(route.ToString());
 
-            object[] body = new object[] { new { Text = message } };
-            var requestBody = JsonConvert.SerializeObject(body);
-            using (var client = new HttpClient())
-            using (var request = new HttpRequestMessage())
+            if (TotalTranslations < 2000)
             {
-                // Build the request.
-                request.Method = HttpMethod.Post;
-                request.RequestUri = new Uri(azureSpeechSettings.Endpoint + route);
-                request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-                request.Headers.Add("Ocp-Apim-Subscription-Key", azureSpeechSettings.SubscriptionKey);
-                request.Headers.Add("Ocp-Apim-Subscription-Region", azureSpeechSettings.Location);
-        
-                // Send the request and get response.
-                HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
-                // Read response as a string.
-                string jsonResults = await response.Content.ReadAsStringAsync();
-
-                jsonResults = jsonResults.TrimStart(new char[] { '[' }).TrimEnd(new char[] { ']' });
-                var transList = JObject.Parse(jsonResults).SelectToken("translations").ToObject<List<Translation>>();
-                
-                Translations.Clear();
-                foreach (var tr in transList)
+                object[] body = new object[] { new { Text = message } };
+                var requestBody = JsonConvert.SerializeObject(body);
+                using (var client = new HttpClient())
+                using (var request = new HttpRequestMessage())
                 {
-                    Translations.Add(tr.To, tr.Text);
+                    // Build the request.
+                    request.Method = HttpMethod.Post;
+                    request.RequestUri = new Uri(azureSpeechSettings.Endpoint + route);
+                    request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+                    request.Headers.Add("Ocp-Apim-Subscription-Key", azureSpeechSettings.SubscriptionKey);
+                    request.Headers.Add("Ocp-Apim-Subscription-Region", azureSpeechSettings.Location);
+            
+                    // Send the request and get response.
+                    HttpResponseMessage response = await client.SendAsync(request).ConfigureAwait(false);
+                    // Read response as a string.
+                    string jsonResults = await response.Content.ReadAsStringAsync();
+
+                    jsonResults = jsonResults.TrimStart(new char[] { '[' }).TrimEnd(new char[] { ']' });
+                    var transList = JObject.Parse(jsonResults).SelectToken("translations").ToObject<List<Translation>>();
+                    
+                    Translations.Clear();
+                    foreach (var tr in transList)
+                    {
+                        Translations.Add(tr.To, tr.Text);
+                    }
+                    Console.WriteLine(jsonResults);
                 }
-                Console.WriteLine(jsonResults);
+            }
+            else
+            {
+                Translations.Clear();
+                foreach (var tr in languages)
+                {
+                    Translations.Add(tr, message);
+                }
+                Console.WriteLine("Translation limit exceeded");
             }
         }
     }
