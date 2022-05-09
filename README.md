@@ -23,3 +23,8 @@ The Dotnet SignalR Rosetta Stone application (aka [Rosetta Stone Chat](https://d
 The Rosetta Stone Chat application provides the building blocks for multi-lingual, real-time chat. There are backlog work items for increasing configurability, supporting additional languages and mobile compatability. The most pressing modification is the internationalization and globalization of the base user interface, including the support of right-to-left languages, as appropriate.
 
 # Motivation and Credits
+
+Two articles got me 90% of where I needed to go with the initial Rosetta Stone Chat application. The Blazor Server chat tutorial provides excellent scaffolding for getting SignalR interactions up and running with Blazor. Jeeva Subburaj's article on building a real time translation chat using SignalR and Azure Cognitive services bridged many of the gaps from the base tutorial. Since it's pre-Blazor, there was still some work to be done to get this where it needed to be.
+
+* [Tutorial: Build a Blazor Server Chat App](https://docs.microsoft.com/en-us/azure/azure-signalr/signalr-tutorial-build-blazor-server-chat-app)
+* [Realtime Language Translation Chat using SignalR and Azure Cognitive Services](https://jeevasubburaj.com/2018/06/06/real-time-language-translation-chat/)
