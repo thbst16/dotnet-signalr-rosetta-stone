@@ -6,6 +6,13 @@
 The Dotnet SignalR Rosetta Stone application (aka [Rosetta Stone Chat](https://dotnet-signalr-rosetta-stone.azurewebsites.net/)) is a demo application built with the [Blazor](https://blazor.net) framework using server hosting. The application uses SignalR to support a real time chat user interface with calls to Azure Cognitive Translator services to perform real time translation across Chinese, English, German, Russian and Spanish languages.
 
 # Notional Architecture
+The Rosetta Stone Chat application consists of 2 core components, as illustrated in the diagram below:
+
+1. The Blazor application running SignalR server is hosted in a docker container, providing real-time websocket based chat services with front end users. These users interact with the application in their language of choice, with the application facilitating all translation services. In a production environment, these services would be hosted in the Azure SignalR Hub managed service to provide the necessary scalability.
+
+2. The Azure service layer provides the translation services to translate user messages from their language into the 5 supported languages of the application: Chinese, English, German, Russian and Spanish. To avoid overusing these services, these calls are currently capped at 2,000 API invocations for the life of the server process.
+
+![Notional Architecture](https://s3.amazonaws.com/s3.beckshome.com/20220509-dotnet-signalr-rosetta-stone-architecturejpg.jpg)
 
 # Screens
 
@@ -20,7 +27,7 @@ The Dotnet SignalR Rosetta Stone application (aka [Rosetta Stone Chat](https://d
 
 # Impact and Future
 
-The Rosetta Stone Chat application provides the building blocks for multi-lingual, real-time chat. There are backlog work items for increasing configurability, supporting additional languages and mobile compatability. The most pressing modification is the internationalization and globalization of the base user interface, including the support of right-to-left languages, as appropriate.
+The Rosetta Stone Chat application provides the building blocks for multi-lingual, real-time chat. There are backlog work items for increasing configurability, supporting additional languages and mobile compatability. The most pressing modification is the internationalization and globalization of the base user interface, including the support of right-to-left languages, as appropriate. 
 
 # Motivation and Credits
 
