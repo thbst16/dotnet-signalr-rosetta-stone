@@ -43,7 +43,7 @@
                 else
                 {
                     <BSNav MarginBottom="Margins.Small" Class="mb-lg-0">
-                        <BSNavItem @onclick="OnLogoutClick">@ChatComponent.username | Sign Out</BSNavItem>
+                        <BSNavItem @onclick="OnLogoutClick">@ChatComponent.username | @SignoutTrans[@_language]</BSNavItem>
                     </BSNav>
                 }
             </Content>
@@ -69,10 +69,18 @@
     private ChatRoom ChatComponent;
     private BSModal? _modalRef;
     private bool _isLoggedIn = false;
-    private string _signInText = "Sign In";
-    private string _signOutText = "";
     private string _name;
     private string? _language;
+
+    // Internationalization Text
+    private IDictionary<string, string> SignoutTrans = new Dictionary<string, string>()
+    {
+      {"en", "Sign Out"},
+      {"de", "Ausloggen"},
+      {"es", "Desconectarse"},
+      {"ru", "Выйти"},
+      {"zh-Hant", "註銷"}
+    };
 
     private void OnLoginClick()
     {

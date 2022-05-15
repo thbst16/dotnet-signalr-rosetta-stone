@@ -9,7 +9,7 @@
             <BSCard CardType="CardType.Card" class="card border-dark mb-3" style="width:100%">
                 <BSCard CardType="CardType.Header" class="card text-white bg-dark mb-3">
                     <span class="oi oi-chat" aria-hidden="true">
-                        <span style="font-size:16px; line-height: 1.5; font-family: Helvetica, Arial, sans-serif"> Chat</span>
+                        <span style="font-size:16px; line-height: 1.5; font-family: Helvetica, Arial, sans-serif">&nbsp;@ChatTrans[@_language]</span>
                     </span>
                 </BSCard>
                 <BSCard CardType="CardType.Body">
@@ -51,7 +51,7 @@
             <BSCard CardType="CardType.Card" class="card border-dark mb-3" style="width: 100%">
                 <BSCard CardType="CardType.Header" class="card text-white bg-dark mb-3">
                     <span class="oi oi-people">
-                        <span style="font-size:16px; line-height: 1.5; font-family: Helvetica, Arial, sans-serif"> Users</span>
+                        <span style="font-size:16px; line-height: 1.5; font-family: Helvetica, Arial, sans-serif">&nbsp;@UserTrans[@_language]</span>
                     </span>
                 </BSCard>
                 <BSCard CardType="CardType.Body">
@@ -83,10 +83,10 @@
                     <BSCard CardType="CardType.Body">
                         <BSRow>
                             <BSCol Column="11">
-                                <BSInput InputType="InputType.TextArea" placeholder="enter your chat text here" @bind-Value="@_newMessage"/>
+                                <BSInput InputType="InputType.TextArea" placeholder=@ChatboxText[@_language] @bind-Value="@_newMessage"/>
                             </BSCol>
                             <BSCol Column="1">
-                                <BSButton class="btn btn-primary" @onclick="@(() => SendAsync(_newMessage))">Send</BSButton>
+                                <BSButton class="btn btn-primary" @onclick="@(() => SendAsync(_newMessage))">@SendText[@_language]</BSButton>
                             </BSCol>
                         </BSRow>
                     </BSCard>
@@ -124,8 +124,43 @@
 
     // name of the user who will be chatting
     public string username;
+    private string _language = "en";
 
     public List<BlazorChat.User> usersList = new List<BlazorChat.User>();
+
+    // Internationalization Text
+    private IDictionary<string, string> ChatTrans = new Dictionary<string, string>()
+    {
+      {"en", "Chat"},
+      {"de", "Chat"},
+      {"es", "Chat"},
+      {"ru", "Чат"},
+      {"zh-Hant", "聊天"}
+    };
+    private IDictionary<string, string> UserTrans = new Dictionary<string, string>()
+    {
+      {"en", "Users"},
+      {"de", "Benutzer"},
+      {"es", "Usuarios"},
+      {"ru", "Пользователи"},
+      {"zh-Hant", "用戶"}
+    };
+    private IDictionary<string, string> ChatboxText = new Dictionary<string, string>()
+    {
+      {"en", "enter your chat text here"},
+      {"de", "Geben Sie hier Ihren Chat-Text ein"},
+      {"es", "ingrese su texto de chat aquí"},
+      {"ru", "введите текст чата здесь"},
+      {"zh-Hant", "在此處輸入您的聊天文本"}
+    };
+    private IDictionary<string, string> SendText = new Dictionary<string, string>()
+    {
+      {"en", "Send"},
+      {"de", "Schicken"},
+      {"es", "Enviar"},
+      {"ru", "Отправлять"},
+      {"zh-Hant", "發送"}
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -141,6 +176,7 @@
             return;
         };
 
+        _language = language;
         // Create the chat client
         string baseUrl = navigationManager.BaseUri;
 
@@ -219,6 +255,7 @@
 
             _hubConnection = null;
             _isChatting = false;
+            _language = "en";
             InvokeAsync(StateHasChanged);
         }
     }
@@ -249,6 +286,7 @@
                                 Body.StartsWith("[Hinweis]") | 
                                 Body.StartsWith("[Примечание]") | 
                                 Body.StartsWith("[通知]") |
+                                Body.StartsWith("[注意] ") |
                                 Body.StartsWith("[Aviso]"));
 
         public string CSS => Mine ? "sent" : "received";
