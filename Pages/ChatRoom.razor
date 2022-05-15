@@ -82,10 +82,10 @@
                 <BSCard CardType="CardType.Card" class="card border-dark mb-3" style="width: 100%">
                     <BSCard CardType="CardType.Body">
                         <BSRow>
-                            <BSCol Column="11">
+                            <BSCol Column="10">
                                 <BSInput InputType="InputType.TextArea" placeholder=@ChatboxText[@_language] @bind-Value="@_newMessage"/>
                             </BSCol>
-                            <BSCol Column="1">
+                            <BSCol Column="2">
                                 <BSButton class="btn btn-primary" @onclick="@(() => SendAsync(_newMessage))">@SendText[@_language]</BSButton>
                             </BSCol>
                         </BSRow>
