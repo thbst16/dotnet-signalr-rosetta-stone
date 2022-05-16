@@ -27,7 +27,7 @@ The Rosetta Stone Chat application consists of 2 core components, as illustrated
 
 # Impact and Future
 
-The Rosetta Stone Chat application provides the building blocks for multi-lingual, real-time chat. There are backlog work items for increasing configurability, supporting additional languages and mobile compatability. The most pressing modification is the internationalization and globalization of the base user interface, including the support of right-to-left languages, as appropriate. 
+The Rosetta Stone Chat application provides the building blocks for multi-lingual, real-time chat. There are backlog work items for increasing configurability, supporting additional languages and mobile compatability.
 
 # Motivation and Credits
 
