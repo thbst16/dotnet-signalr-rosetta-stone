@@ -164,7 +164,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        IConfiguration config = new ConfigurationBuilder()
+                .AddJsonFile("config/appsettings.json")
+                .AddEnvironmentVariables()
+                .Build();
+        var _hubUrlBase = config.GetValue<string>("HubConfiguration:Url");
+    
+        // _hubUrl = baseUrl.TrimEnd('/') + BlazorChatSampleHub.HubUrl; --- Running as ASP.NET process
+        // _hubUrl = "https://127.0.0.1:7022/chat"; -- Running in ASP.NET process
+        // _hubUrl = "http://host.docker.internal:8080/chat"; --- Running in Docker
+        // _hubUrl = "https://dotnet-signalr-rosetta-stone.azurewebsites.net/chat"; --- Running on Azure
+        _hubUrl = $"{_hubUrlBase}/chat";
     }
 
     public async Task Chat(string name, string language)
@@ -177,13 +187,6 @@
         };
 
         _language = language;
-        // Create the chat client
-        string baseUrl = navigationManager.BaseUri;
-
-        // Use docker.internal when running with docker and with network specified in docker-compose
-        // _hubUrl = baseUrl.TrimEnd('/') + BlazorChatSampleHub.HubUrl;
-        _hubUrl = "https://dotnet-signalr-rosetta-stone.azurewebsites.net/chat";
-
         _hubConnection = new HubConnectionBuilder()
         .WithUrl(_hubUrl, (opts) =>
         {
