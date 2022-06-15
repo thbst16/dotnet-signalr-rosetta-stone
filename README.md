@@ -17,13 +17,13 @@ The Rosetta Stone Chat application consists of 2 core components, as illustrated
 # Screens
 
 ### Login form
-![Rosetta Stone Chat Login Form](https://s3.amazonaws.com/s3.beckshome.com/20220508-dotnet-signalr-rosetta-stone-chat-login.jpg)
+![Rosetta Stone Chat Login Form](https://s3.amazonaws.com/s3.beckshome.com/20220516-dotnet-signalr-rosetta-stone-chat-login.jpg)
 ### In Progress Chat - English
-![Rosetta Stone Chat - English](https://s3.amazonaws.com/s3.beckshome.com/20220508-dotnet-signalr-rosetta-stone-chat-english.jpg)
+![Rosetta Stone Chat - English](https://s3.amazonaws.com/s3.beckshome.com/20220516-dotnet-signalr-rosetta-stone-chat-english.jpg)
 ### In Progress Chat - German
-![Rosetta Stone Chat - German](https://s3.amazonaws.com/s3.beckshome.com/20220508-dotnet-signalr-rosetta-stone-chat-german.jpg)
+![Rosetta Stone Chat - German](https://s3.amazonaws.com/s3.beckshome.com/20220516-dotnet-signalr-rosetta-stone-chat-german.jpg)
 ### In Progress Chat - Russian
-![Rosetta Stone Chat - Russian](https://s3.amazonaws.com/s3.beckshome.com/20220508-dotnet-signalr-rosetta-stone-chat-russian.jpg)
+![Rosetta Stone Chat - Russian](https://s3.amazonaws.com/s3.beckshome.com/20220516-dotnet-signalr-rosetta-stone-chat-russian.jpg)
 
 # Impact and Future
 
