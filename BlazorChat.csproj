@@ -5,9 +5,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="BlazorStrap" Version="5.0.105.4262022"/>
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.6"/>
-		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.22.0"/>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+		<PackageReference Include="BlazorStrap" Version="5.0.106" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.9" />
+		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.23.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 </Project>
