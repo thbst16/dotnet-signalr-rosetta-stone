@@ -139,25 +139,25 @@ namespace BlazorChat
 
     public class User
     {
-        public string Name {get; set;}
-        public string Language {get; set;}
-        public string ConnectionId {get; set;}
+        public required string Name {get; set;}
+        public required string Language {get; set;}
+        public required string ConnectionId {get; set;}
     }
 
     [JsonObject]
     public class Translation
     {
         [JsonProperty("text")]
-        public string Text {get; set;}
+        public required string Text {get; set;}
         [JsonProperty("to")]
-        public string To {get; set;}
+        public required string To {get; set;}
     }
 
      // Collections of job-specific settings
     public class AzureSpeechSettings
     {
-        public string SubscriptionKey { get; set; }
-        public string Endpoint { get; set; }
-        public string Location { get; set; }
+        public required string SubscriptionKey { get; set; }
+        public required string Endpoint { get; set; }
+        public required string Location { get; set; }
     }
 }
