@@ -66,7 +66,7 @@
 
 @code
 {
-    private ChatRoom ChatComponent;
+    private ChatRoom ChatComponent = new ChatRoom();
     private BSModal? _modalRef;
     private bool _isLoggedIn = false;
     private string _name = String.Empty;
@@ -91,10 +91,10 @@
         InvokeAsync(StateHasChanged);
     }
 
-    private async void OnLogoutClick()
+    private void OnLogoutClick()
     {
         _isLoggedIn = false;
-        await ChatComponent.DisconnectAsync();
+        ChatComponent.DisconnectAsync();
         InvokeAsync(StateHasChanged);
     }
 }
