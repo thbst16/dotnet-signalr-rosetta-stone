@@ -69,8 +69,8 @@
     private ChatRoom ChatComponent;
     private BSModal? _modalRef;
     private bool _isLoggedIn = false;
-    private string _name;
-    private string? _language;
+    private string _name = String.Empty;
+    private string _language = String.Empty;
 
     // Internationalization Text
     private IDictionary<string, string> SignoutTrans = new Dictionary<string, string>()
@@ -91,10 +91,10 @@
         InvokeAsync(StateHasChanged);
     }
 
-    private void OnLogoutClick()
+    private async void OnLogoutClick()
     {
         _isLoggedIn = false;
-        ChatComponent.DisconnectAsync();
+        await ChatComponent.DisconnectAsync();
         InvokeAsync(StateHasChanged);
     }
 }
