@@ -45,7 +45,7 @@ namespace BlazorChat
             return base.OnConnectedAsync();
         }
 
-        public override async Task OnDisconnectedAsync(Exception e)
+        public override async Task OnDisconnectedAsync(Exception? e)
         {
             Console.WriteLine($"Disconnected {e?.Message} {Context.ConnectionId}");
             // Remove user on disconnect
@@ -78,7 +78,7 @@ namespace BlazorChat
                 .AddJsonFile("config/appsettings.json")
                 .AddEnvironmentVariables()
                 .Build();
-            AzureSpeechSettings azureSpeechSettings = config.GetRequiredSection("AzureSpeech").Get<AzureSpeechSettings>();
+            AzureSpeechSettings? azureSpeechSettings = config.GetRequiredSection("AzureSpeech").Get<AzureSpeechSettings>();
             
             List<string> languages = new List<string> {"zh-Hant", "en", "de", "ru", "es"};
             int i = languages.IndexOf(sourceLanguage);
