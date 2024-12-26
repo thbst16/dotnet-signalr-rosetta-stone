@@ -122,8 +122,16 @@ namespace BlazorChat
                     string jsonResults = await response.Content.ReadAsStringAsync();
 
                     jsonResults = jsonResults.TrimStart(new char[] { '[' }).TrimEnd(new char[] { ']' });
-                    var transList = JObject.Parse(jsonResults).SelectToken("translations").ToObject<List<Translation>>();
-                    
+                    List<Translation> transList;
+                    var token = JObject.Parse(jsonResults).SelectToken("translations");
+                    if (token != null)
+                    {
+                        transList = token.ToObject<List<Translation>>();
+                    }
+                    else
+                    {
+                        transList = new List<Translation>(); // Depending on the behavior you need
+                    }
                     Translations.Clear();
                     foreach (var tr in transList)
                     {

@@ -111,19 +111,19 @@
     private bool _isChatting = false;
 
     // on-screen message
-    private string _message;
+    private string _message = String.Empty;
 
     // new message input
-    private string _newMessage;
+    private string _newMessage = String.Empty;
 
     // list of messages in chat
     private List<Message> _messages = new List<Message>();
 
-    private string _hubUrl;
-    private HubConnection _hubConnection;
+    private string _hubUrl = String.Empty;
+    private HubConnection? _hubConnection = null;
 
     // name of the user who will be chatting
-    public string username;
+    public string username = String.Empty;
     private string _language = "en";
 
     public List<BlazorChat.User> usersList = new List<BlazorChat.User>();
