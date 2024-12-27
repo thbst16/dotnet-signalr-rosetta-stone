@@ -104,7 +104,14 @@ namespace BlazorChat
                 {
                     // Build the request.
                     request.Method = HttpMethod.Post;
-                    request.RequestUri = new Uri(azureSpeechSettings.Endpoint + route);
+                    if (azureSpeechSettings?.Endpoint != null && route != null)
+                    {
+                        request.RequestUri = new Uri(azureSpeechSettings.Endpoint + route);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Endpoint or route is null");
+                    }
                     request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
                     request.Headers.Add("Ocp-Apim-Subscription-Key", azureSpeechSettings.SubscriptionKey);
                     request.Headers.Add("Ocp-Apim-Subscription-Region", azureSpeechSettings.Location);
