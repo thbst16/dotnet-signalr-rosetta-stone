@@ -162,7 +162,7 @@
       {"zh-Hant", "發送"}
     };
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile("config/appsettings.json")
