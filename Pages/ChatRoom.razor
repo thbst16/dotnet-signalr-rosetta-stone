@@ -253,8 +253,11 @@
         {
             await SendAsync($"[Notice] {username} left chat room.");
             Thread.Sleep(500);
-            await _hubConnection.StopAsync();
-            await _hubConnection.DisposeAsync();
+            if (_hubConnection != null)
+            {
+                await _hubConnection.StopAsync();
+                await _hubConnection.DisposeAsync();
+            }
 
             _hubConnection = null;
             _isChatting = false;
